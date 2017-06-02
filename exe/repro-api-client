@@ -1,0 +1,48 @@
+#!/usr/bin/env ruby
+
+require 'repro/api/client'
+require 'json'
+require 'optparse'
+
+class CLI
+  def initialize(args)
+    @token = @push_id = @body = @title = @user_ids = @json = nil
+    opts = OptionParser.new
+    opts.on('-t', '--token TOKEN', 'Repro API Marketing Token') {|v| @token = v}
+    opts.on('-i', '--push-id PUSH_ID', 'Repro Push ID') {|v| @push_id = v}
+    opts.on('-u', '--users USER_ID[,USER_ID,...]', 'Comma separated user ids') {|v| @user_ids = v.split(',')}
+    opts.on('--title TITLE', 'Title in push notification') {|v| @title = v}
+    opts.on('-b', '--body BODY', 'Message body in push notification') {|v| @body = v}
+    opts.on('--json JSON', 'JSON data to use as custom payload') {|v| @payload = JSON.parse(v, symbolize_names: true)}
+    opts.on('--file FILE', 'FILE that contains json data as custom payload') {|v| @payload = JSON.parse(File.read(v, symbolize_names: true))}
+    opts.parse!(args)
+  end
+
+  def run
+    raise '-t,--token is required' if @token.nil?
+    raise '-i,--push-id is required' if @push_id.nil?
+    raise '-u,--users are required' if @user_ids.nil?
+    raise '-b,--body or --json or --file is required' if @body.nil? && @payload.nil?
+
+    Repro::Api::Client.configure do |c|
+      c[:token] = @token
+    end
+
+    if @payload
+      custom_payload = @payload
+    else
+      custom_payload = {}
+      custom_payload[:body] = @body if @body
+      custom_payload[:title] = @title if @title
+    end
+
+    begin
+      response = Repro::Api::Client.push_deliver(@push_id, @user_ids, custom_payload)
+      puts response.body
+    rescue => ex
+      puts ex.message
+    end
+  end
+end
+
+CLI.new(ARGV).run
