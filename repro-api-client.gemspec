@@ -11,6 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = 'Repro API client'
   spec.description   = 'Repro API client'
+  spec.post_install_message = '!!! v0.2.0 has BREAKING CHANGE. Repro::Api::Client is not a module anymore. !!!'
   spec.homepage      = 'https://github.com/totem3/repro-api-client'
   spec.license       = 'MIT'
 
