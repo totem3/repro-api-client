@@ -1,6 +1,6 @@
 module Repro
   module Api
-    module Client
+    class Client
       VERSION = "0.1.0"
     end
   end
