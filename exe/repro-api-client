@@ -24,9 +24,7 @@ class CLI
     raise '-u,--users are required' if @user_ids.nil?
     raise '-b,--body or --json or --file is required' if @body.nil? && @payload.nil?
 
-    Repro::Api::Client.configure do |c|
-      c[:token] = @token
-    end
+    client = Repro::Api::Client.new @token
 
     if @payload
       custom_payload = @payload
@@ -37,7 +35,7 @@ class CLI
     end
 
     begin
-      response = Repro::Api::Client.push_deliver(@push_id, @user_ids, custom_payload)
+      response = client.push_deliver(@push_id, @user_ids, custom_payload)
       puts response.body
     rescue => ex
       puts ex.message
