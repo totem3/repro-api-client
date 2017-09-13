@@ -51,15 +51,21 @@ module Repro
       private
 
       def build_payload(opts)
-        payload = {aps: {alert: {}}}
-        payload[:aps][:alert][:body] = opts.delete(:body)
-        payload[:aps][:alert][:title] = opts.delete(:title)
-        payload[:aps][:badge] = opts.delete(:badge) if opts[:badge]
-        payload[:aps][:sound] = opts.key?(:sound) ? opts.delete(:sound) : 'default'
-        payload[:rpr_url] = opts.delete(:url) if opts[:url]
+        payload = { aps: { alert: {} }, data: {} }
+        payload[:data][:rpr_body] = opts[:body]
+        payload[:data][:rpr_title] = opts[:title]
+        payload[:aps][:alert][:body] = opts[:body]
+        payload[:aps][:alert][:title] = opts[:title]
+        payload[:aps][:badge] = opts[:badge] if opts[:badge]
+        payload[:aps][:sound] = opts.key?(:sound) ? opts[:sound] : 'default'
+        if opts[:url]
+          payload[:data][:rpr_url] = opts[:url]
+          payload[:rpr_url] = opts[:url]
+        end
         if opts[:attachment]
+          payload[:data][:rpr_picture] = {url: opts[:attachment]}
           payload[:aps]['mutable-content'] = 1
-          payload[:rpr_attachment] = opts.delete(:attachment)
+          payload[:rpr_attachment] = opts[:attachment]
         end
         JSON.generate(payload)
       end
