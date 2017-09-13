@@ -52,18 +52,18 @@ module Repro
 
       def build_payload(opts)
         payload = { aps: { alert: {} }, data: {} }
-        payload[:data][:rpr_body] = opts[:body]
-        payload[:data][:rpr_title] = opts[:title]
+        payload[:data][:app_body] = opts[:body]
+        payload[:data][:app_title] = opts[:title]
         payload[:aps][:alert][:body] = opts[:body]
         payload[:aps][:alert][:title] = opts[:title]
         payload[:aps][:badge] = opts[:badge] if opts[:badge]
         payload[:aps][:sound] = opts.key?(:sound) ? opts[:sound] : 'default'
         if opts[:url]
-          payload[:data][:rpr_url] = opts[:url]
+          payload[:data][:app_url] = opts[:url]
           payload[:rpr_url] = opts[:url]
         end
         if opts[:attachment]
-          payload[:data][:rpr_picture] = {url: opts[:attachment]}
+          payload[:data][:app_picture] = {url: opts[:attachment]}
           payload[:aps]['mutable-content'] = 1
           payload[:rpr_attachment] = opts[:attachment]
         end
