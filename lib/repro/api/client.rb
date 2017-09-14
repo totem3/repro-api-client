@@ -63,7 +63,7 @@ module Repro
           payload[:rpr_url] = opts[:url]
         end
         if opts[:attachment]
-          payload[:data][:app_picture] = {url: opts[:attachment]}
+          payload[:data][:app_picture] = opts[:attachment]
           payload[:aps]['mutable-content'] = 1
           payload[:rpr_attachment] = opts[:attachment]
         end
